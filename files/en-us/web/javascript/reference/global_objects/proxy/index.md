@@ -153,7 +153,7 @@ Most of the internal methods are straightforward in what they do. The only two t
 ## Static methods
 
 - {{jsxref("Proxy.revocable()")}}
-  - : Creates a revocable `Proxy` object.
+  - : Creates a `Proxy` object with a `revoke()` function that, when called, makes the `Proxy` object unusable.
 
 ## Examples
 
