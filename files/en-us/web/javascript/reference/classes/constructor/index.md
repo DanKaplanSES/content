@@ -47,75 +47,84 @@ const otto = new Person("Otto");
 otto.introduce(); // Hello, my name is Otto
 ```
 
-If you don't provide your own constructor, then a default constructor will be supplied for you.
-If your class is a base class, the default constructor is empty:
+If you don't provide an explicit constructor, a default constructor will be provided for you:
 
-```js-nolint
-constructor() {}
-```
+1. If your class is a base class (e.g., it does not `extend` a parent class), the default constructor will be empty:
 
-If your class is a derived class, the default constructor calls the parent constructor, passing along any arguments that were provided:
+   ```js-nolint
+   constructor() {}
+   ```
+2. When your class is derived from a parent class, the default constructor has a different implementation. It passes its arguments to the parent class's constructor by calling [`super()`](/en-US/docs/Web/JavaScript/Reference/Operators/super):
 
-```js-nolint
-constructor(...args) {
-  super(...args);
-}
-```
+   ```js-nolint
+   constructor(...args) {
+     super(...args);
+   }
+   ```
 
-> **Note:** The difference between an explicit constructor like the one above and the default constructor is that the latter doesn't actually invoke [the array iterator](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/@@iterator) through [argument spreading](/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax).
-
-That enables code like this to work:
+This is why ``GenericItem` and `Dog` don't need explicit constructors in the following example:
 
 ```js
-class ValidationError extends Error {
-  printCustomerMessage() {
-    return `Validation failed :-( (details: ${this.message})`;
+class GenericItem {
+  name;
+}
+
+const toothbrush = new GenericItem();
+toothbrush.name = "Toothbrush";
+console.log(toothbrush); // Object { name: "Toothbrush" }
+
+class Pet {
+  species;
+
+  constructor(species) {
+    this.species = species;
   }
 }
 
-try {
-  throw new ValidationError("Not a valid phone number");
-} catch (error) {
-  if (error instanceof ValidationError) {
-    console.log(error.name); // This is Error instead of ValidationError!
-    console.log(error.printCustomerMessage());
-  } else {
-    console.log("Unknown error", error);
-    throw error;
-  }
-}
+class Dog extends Pet {}
+
+const dog = new Dog();
+dog.species = "Canis familiaris";
+console.log(dog); // Object { species: "Canis familiaris" }
 ```
 
-The `ValidationError` class doesn't need an explicit constructor, because it doesn't need to do any custom initialization.
-The default constructor then takes care of initializing the parent `Error` from the argument it is given.
-
-However, if you provide your own constructor, and your class derives from some parent class, then you must explicitly call the parent class constructor using [`super()`](/en-US/docs/Web/JavaScript/Reference/Operators/super).
-For example:
+If `Dog` did have an explicit constructor, it would need to call its parent constructor via [`super()`](/en-US/docs/Web/JavaScript/Reference/Operators/super):
 
 ```js
-class ValidationError extends Error {
-  constructor(message) {
-    super(message); // call parent class constructor
-    this.name = "ValidationError";
-    this.code = "42";
-  }
+class Pet {
+  species;
 
-  printCustomerMessage() {
-    return `Validation failed :-( (details: ${this.message}, code: ${this.code})`;
+  constructor(species) {
+    this.species = species;
   }
 }
 
-try {
-  throw new ValidationError("Not a valid phone number");
-} catch (error) {
-  if (error instanceof ValidationError) {
-    console.log(error.name); // Now this is ValidationError!
-    console.log(error.printCustomerMessage());
-  } else {
-    console.log("Unknown error", error);
-    throw error;
+class Cat extends Pet {
+  constructor() {
+    super("Felis catus");
   }
 }
+
+const cat = new Cat();
+console.log(cat.species); // "Felis catus"
+```
+
+```js example-bad
+class Pet {
+  species;
+
+  constructor(species) {
+    this.species = species;
+  }
+}
+
+class Cat extends Pet {
+  constructor() {
+    
+  }
+}
+
+const cat = new Cat(); // Uncaught ReferenceError: must call super constructor before using 'this' in derived class constructor
 ```
 
 Using [`new`](/en-US/docs/Web/JavaScript/Reference/Operators/new) on a class goes through the following steps:
