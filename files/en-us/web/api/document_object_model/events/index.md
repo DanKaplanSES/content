@@ -987,7 +987,7 @@ function simulateClick() {
 There are two recommended approaches for registering handlers. Event handler code can be made to run when an event is triggered either by assigning it to the target element's corresponding _onevent_ property or by registering the handler as a listener for the element using the {{domxref("EventTarget.addEventListener", "addEventListener()")}} method. In either case, the handler will receive an object that conforms to the [`Event` interface](/en-US/docs/Web/API/Event) (or a [derived interface](/en-US/docs/Web/API/Event#interfaces_based_on_event)). The main difference is that multiple event handlers can be added (or removed) using the event listener methods.
 
 > [!WARNING]
-> A third approach for setting event handlers using HTML onevent attributes is not recommended! They inflate the markup and make it less readable and harder to debug. For more information, see [Inline event handlers](/en-US/docs/Learn_web_development/Core/Scripting/Events#inline_event_handlers_—_dont_use_these).
+> The first approach for setting event handlers, using HTML onevent properties, is not recommended! They inflate the markup and make it less readable and harder to debug. For more information, see [Inline event handlers](/en-US/docs/Learn_web_development/Core/Scripting/Events#inline_event_handlers_—_dont_use_these).
 
 ### Using onevent properties
 
